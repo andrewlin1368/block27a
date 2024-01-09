@@ -148,6 +148,7 @@ const CalcData = ({ revenues }) => {
 };
 
 const Transactions = ({ transactions }) => {
+  const rows = [];
   transactions.forEach((transaction) => {
     rows.push({
       id: transaction.txId,
@@ -206,13 +207,12 @@ const Transactions = ({ transactions }) => {
   );
 };
 
-const rows = [];
-
 function App() {
   const [transactions, setTransactions] = useState(mockTransactions);
   const [revenues, setRevenues] = useState(mockGeographyData);
   const theme = useTheme();
   const [open, setOpen] = useState(false);
+  const [home, setHome] = useState("Dashboard");
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -221,8 +221,8 @@ function App() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-
-  return (
+  console.log(home);
+  return home === "Dashboard" ? (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar position="fixed" open={open}>
@@ -266,7 +266,12 @@ function App() {
         <Divider />
         <List>
           {["Dashboard", "FAQ Page"].map((text, index) => (
-            <ListItem key={text}>
+            <ListItem
+              key={text}
+              onClick={() => {
+                setHome(text);
+              }}
+            >
               <ListItemButton>
                 <ListItemIcon>
                   {index % 2 === 0 ? <HomeIcon /> : <HelpOutlineIcon />}
@@ -285,6 +290,72 @@ function App() {
         <br></br>
         <h4 className="transactionTitle">Recent Transactions</h4>
         <Transactions transactions={transactions}></Transactions>
+      </Main>
+    </Box>
+  ) : (
+    <Box sx={{ display: "flex" }}>
+      <CssBaseline />
+      <AppBar position="fixed" open={open}>
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerOpen}
+            edge="start"
+            sx={{ mr: 2, ...(open && { display: "none" }) }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" noWrap component="div">
+            Dashboard
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Drawer
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          "& .MuiDrawer-paper": {
+            width: drawerWidth,
+            boxSizing: "border-box",
+          },
+        }}
+        variant="persistent"
+        anchor="left"
+        open={open}
+      >
+        <DrawerHeader>
+          <IconButton onClick={handleDrawerClose}>
+            {theme.direction === "ltr" ? (
+              <ChevronLeftIcon />
+            ) : (
+              <ChevronRightIcon />
+            )}
+          </IconButton>
+        </DrawerHeader>
+        <Divider />
+        <List>
+          {["Dashboard", "FAQ Page"].map((text, index) => (
+            <ListItem
+              key={text}
+              onClick={() => {
+                setHome(text);
+              }}
+            >
+              <ListItemButton>
+                <ListItemIcon>
+                  {index % 2 === 0 ? <HomeIcon /> : <HelpOutlineIcon />}
+                </ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+        <Divider />
+      </Drawer>
+      <Main open={open}>
+        <DrawerHeader />
+        <h5>FAQ PAGE</h5>
       </Main>
     </Box>
   );
